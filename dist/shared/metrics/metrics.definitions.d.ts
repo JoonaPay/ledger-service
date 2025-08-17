@@ -1,0 +1,12 @@
+export declare const httpRequestsCounter: import("@nestjs/common").Provider;
+export declare const httpRequestDuration: import("@nestjs/common").Provider;
+export declare const ledgerOperationsCounter: import("@nestjs/common").Provider;
+export declare const accountOperationsCounter: import("@nestjs/common").Provider;
+export declare const transactionCounter: import("@nestjs/common").Provider;
+export declare const balanceGauge: import("@nestjs/common").Provider;
+export declare const blnkfinanceHealthGauge: import("@nestjs/common").Provider;
+export declare const kafkaMessagesCounter: import("@nestjs/common").Provider;
+export declare const databaseConnectionsGauge: import("@nestjs/common").Provider;
+export declare const cacheHitRatioGauge: import("@nestjs/common").Provider;
+export declare const errorRateCounter: import("@nestjs/common").Provider;
+export declare const businessMetricsGauge: import("@nestjs/common").Provider;
