@@ -186,78 +186,6 @@ class CreateReconciliationLogsTable1755218300004 {
                     default: "CURRENT_TIMESTAMP",
                 },
             ],
-            indices: [
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_ACCOUNT_ID",
-                    columnNames: ["account_id"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_DATE",
-                    columnNames: ["reconciliation_date"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_TYPE",
-                    columnNames: ["reconciliation_type"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_STATUS",
-                    columnNames: ["status"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_CURRENCY",
-                    columnNames: ["currency"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_VARIANCE",
-                    columnNames: ["variance_amount"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_TOLERANCE",
-                    columnNames: ["is_within_tolerance", "requires_attention"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_BLNK_STATUS",
-                    columnNames: ["blnk_sync_status"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_EXTERNAL_REF",
-                    columnNames: ["external_reference"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_CREATED_AT",
-                    columnNames: ["created_at"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_RECONCILIATION_LOGS_ACCOUNT_DATE",
-                    columnNames: ["account_id", "reconciliation_date", "reconciliation_type"],
-                }),
-            ],
-            foreignKeys: [
-                new typeorm_1.ForeignKey({
-                    name: "FK_RECONCILIATION_LOGS_ACCOUNT_ID",
-                    columnNames: ["account_id"],
-                    referencedTableName: "ledger_accounts",
-                    referencedColumnNames: ["id"],
-                    onDelete: "CASCADE",
-                    onUpdate: "CASCADE",
-                }),
-                new typeorm_1.ForeignKey({
-                    name: "FK_RECONCILIATION_LOGS_ADJUSTMENT_TXN",
-                    columnNames: ["adjustment_transaction_id"],
-                    referencedTableName: "transactions",
-                    referencedColumnNames: ["id"],
-                    onDelete: "SET NULL",
-                    onUpdate: "CASCADE",
-                }),
-                new typeorm_1.ForeignKey({
-                    name: "FK_RECONCILIATION_LOGS_LAST_TXN",
-                    columnNames: ["last_transaction_id"],
-                    referencedTableName: "transactions",
-                    referencedColumnNames: ["id"],
-                    onDelete: "SET NULL",
-                    onUpdate: "CASCADE",
-                }),
-            ],
         }), true);
         await queryRunner.query(`
       CREATE TRIGGER update_reconciliation_logs_updated_at 
@@ -269,23 +197,23 @@ class CreateReconciliationLogsTable1755218300004 {
       CREATE OR REPLACE FUNCTION calculate_reconciliation_variance()
       RETURNS TRIGGER AS $$
       BEGIN
-        -- Calculate variance amount
+        // Calculate variance amount
         NEW.variance_amount := NEW.external_balance - NEW.internal_balance;
         
-        -- Calculate variance percentage
+        // Calculate variance percentage
         IF NEW.internal_balance != 0 THEN
           NEW.variance_percentage := (NEW.variance_amount / ABS(NEW.internal_balance)) * 100;
         ELSE
           NEW.variance_percentage := 0;
         END IF;
         
-        -- Check if within tolerance
+        // Check if within tolerance
         NEW.is_within_tolerance := ABS(NEW.variance_amount) <= NEW.tolerance_amount;
         
-        -- Set requires attention flag
+        // Set requires attention flag
         NEW.requires_attention := NOT NEW.is_within_tolerance OR NEW.status = 'FAILED';
         
-        -- Auto-update status based on variance
+        // Auto-update status based on variance
         IF NEW.status = 'PENDING' AND NEW.is_within_tolerance THEN
           NEW.status := 'RECONCILED';
           NEW.reconciled_at := CURRENT_TIMESTAMP;
@@ -303,11 +231,6 @@ class CreateReconciliationLogsTable1755218300004 {
       FOR EACH ROW
       EXECUTE FUNCTION calculate_reconciliation_variance();
     `);
-        --Create;
-        function to() { }
-        perform;
-        daily;
-        reconciliation;
         await queryRunner.query(`
       CREATE OR REPLACE FUNCTION perform_daily_reconciliation(
         p_account_id UUID,
@@ -323,7 +246,7 @@ class CreateReconciliationLogsTable1755218300004 {
         v_transaction_count INTEGER;
         v_last_transaction_id UUID;
       BEGIN
-        -- Get account information
+        // Get account information
         SELECT 
           balance, 
           currency, 
@@ -339,7 +262,7 @@ class CreateReconciliationLogsTable1755218300004 {
           RAISE EXCEPTION 'Account not found: %', p_account_id;
         END IF;
         
-        -- Get transaction count and last transaction for the day
+        // Get transaction count and last transaction for the day
         SELECT 
           COUNT(*),
           MAX(t.id)
@@ -351,11 +274,11 @@ class CreateReconciliationLogsTable1755218300004 {
           AND DATE(t.created_at) = p_reconciliation_date
           AND t.status = 'COMPLETED';
         
-        -- For now, use internal balance as external balance
-        -- In production, this would fetch from BlnkFinance API
+        // For now, use internal balance as external balance
+        // In production, this would fetch from BlnkFinance API
         v_external_balance := v_internal_balance;
         
-        -- Insert reconciliation log
+        // Insert reconciliation log
         INSERT INTO reconciliation_logs (
           account_id,
           reconciliation_date,
@@ -392,11 +315,6 @@ class CreateReconciliationLogsTable1755218300004 {
       END;
       $$ LANGUAGE plpgsql;
     `);
-        --Create;
-        function to() { }
-        reconcile;
-        all;
-        accounts;
         await queryRunner.query(`
       CREATE OR REPLACE FUNCTION reconcile_all_accounts(
         p_reconciliation_date DATE DEFAULT CURRENT_DATE
@@ -420,6 +338,20 @@ class CreateReconciliationLogsTable1755218300004 {
       END;
       $$ LANGUAGE plpgsql;
     `);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_ACCOUNT_ID ON reconciliation_logs (account_id)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_DATE ON reconciliation_logs (reconciliation_date)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_TYPE ON reconciliation_logs (reconciliation_type)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_STATUS ON reconciliation_logs (status)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_CURRENCY ON reconciliation_logs (currency)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_VARIANCE ON reconciliation_logs (variance_amount)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_TOLERANCE ON reconciliation_logs (is_within_tolerance, requires_attention)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_BLNK_STATUS ON reconciliation_logs (blnk_sync_status)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_EXTERNAL_REF ON reconciliation_logs (external_reference)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_CREATED_AT ON reconciliation_logs (created_at)`);
+        await queryRunner.query(`CREATE INDEX IDX_RECONCILIATION_LOGS_ACCOUNT_DATE ON reconciliation_logs (account_id, reconciliation_date, reconciliation_type)`);
+        await queryRunner.query(`ALTER TABLE reconciliation_logs ADD CONSTRAINT FK_RECONCILIATION_LOGS_ACCOUNT_ID FOREIGN KEY (account_id) REFERENCES ledger_accounts(id) ON DELETE CASCADE ON UPDATE CASCADE`);
+        await queryRunner.query(`ALTER TABLE reconciliation_logs ADD CONSTRAINT FK_RECONCILIATION_LOGS_ADJUSTMENT_TXN FOREIGN KEY (adjustment_transaction_id) REFERENCES transactions(id) ON DELETE SET NULL ON UPDATE CASCADE`);
+        await queryRunner.query(`ALTER TABLE reconciliation_logs ADD CONSTRAINT FK_RECONCILIATION_LOGS_LAST_TXN FOREIGN KEY (last_transaction_id) REFERENCES transactions(id) ON DELETE SET NULL ON UPDATE CASCADE`);
     }
     async down(queryRunner) {
         await queryRunner.query(`DROP TRIGGER IF EXISTS calculate_reconciliation_variance_trigger ON reconciliation_logs`);

@@ -15,8 +15,18 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return HTML content', () => {
+      const result = appController.getHome();
+      expect(result).toContain('JoonaPay Ledger Service');
+      expect(result).toContain('<!DOCTYPE html>');
+    });
+  });
+  
+  describe('health', () => {
+    it('should return health status', () => {
+      const result = appController.getHealth();
+      expect(result.status).toBe('healthy');
+      expect(result.service).toBeDefined();
     });
   });
 });

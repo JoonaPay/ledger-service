@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccountStatementDto = exports.AccountBalanceDto = exports.AccountDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
@@ -50,7 +49,7 @@ __decorate([
         enum: orm_entities_1.AccountType,
         example: orm_entities_1.AccountType.ASSET,
     }),
-    __metadata("design:type", typeof (_a = typeof orm_entities_1.AccountType !== "undefined" && orm_entities_1.AccountType) === "function" ? _a : Object)
+    __metadata("design:type", String)
 ], AccountDto.prototype, "accountType", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
@@ -114,7 +113,7 @@ __decorate([
         enum: orm_entities_1.NormalBalance,
         example: orm_entities_1.NormalBalance.DEBIT,
     }),
-    __metadata("design:type", typeof (_b = typeof orm_entities_1.NormalBalance !== "undefined" && orm_entities_1.NormalBalance) === "function" ? _b : Object)
+    __metadata("design:type", String)
 ], AccountDto.prototype, "normalBalance", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
@@ -122,7 +121,7 @@ __decorate([
         enum: orm_entities_1.AccountStatus,
         example: orm_entities_1.AccountStatus.ACTIVE,
     }),
-    __metadata("design:type", typeof (_c = typeof orm_entities_1.AccountStatus !== "undefined" && orm_entities_1.AccountStatus) === "function" ? _c : Object)
+    __metadata("design:type", String)
 ], AccountDto.prototype, "status", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({

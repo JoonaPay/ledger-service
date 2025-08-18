@@ -205,12 +205,12 @@ export class TransactionProcessorService {
       await this.transactionRepository.update(originalTransactionId, {
         status: TransactionStatus.REVERSED,
         reversalTransactionId: reversalId,
-        metadata: {
+        metadata: () => `jsonb_set(metadata, '{}', '${JSON.stringify({
           ...originalTransaction.metadata,
           reversedAt: new Date().toISOString(),
           reversalReason: reason,
           reversedBy: initiatedBy,
-        },
+        })}'::jsonb)`,
       });
 
       // Get the reversal transaction details

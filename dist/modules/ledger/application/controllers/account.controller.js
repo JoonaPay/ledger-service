@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var AccountController_1;
-var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccountController = void 0;
 const common_1 = require("@nestjs/common");
@@ -293,7 +292,7 @@ __decorate([
     __param(4, (0, common_1.Query)('limit')),
     __param(5, (0, common_1.Query)('offset')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, typeof (_a = typeof orm_entities_1.AccountType !== "undefined" && orm_entities_1.AccountType) === "function" ? _a : Object, typeof (_b = typeof orm_entities_1.AccountStatus !== "undefined" && orm_entities_1.AccountStatus) === "function" ? _b : Object, Object, Object]),
+    __metadata("design:paramtypes", [String, String, String, String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AccountController.prototype, "getAccounts", null);
 __decorate([

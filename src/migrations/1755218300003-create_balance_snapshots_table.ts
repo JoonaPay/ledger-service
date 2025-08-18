@@ -112,47 +112,8 @@ export class CreateBalanceSnapshotsTable1755218300003 implements MigrationInterf
             default: "CURRENT_TIMESTAMP",
           },
         ],
-        indices: [
-          new Index({
-            name: "IDX_BALANCE_SNAPSHOTS_ACCOUNT_ID",
-            columnNames: ["account_id"],
-          }),
-          new Index({
-            name: "IDX_BALANCE_SNAPSHOTS_DATE",
-            columnNames: ["snapshot_date"],
-          }),
-          new Index({
-            name: "IDX_BALANCE_SNAPSHOTS_TYPE",
-            columnNames: ["snapshot_type"],
-          }),
-          new Index({
-            name: "IDX_BALANCE_SNAPSHOTS_CURRENCY",
-            columnNames: ["currency"],
-          }),
-          new Index({
-            name: "IDX_BALANCE_SNAPSHOTS_RECONCILED",
-            columnNames: ["is_reconciled"],
-          }),
-          new Index({
-            name: "IDX_BALANCE_SNAPSHOTS_ACCOUNT_DATE",
-            columnNames: ["account_id", "snapshot_date"],
-            isUnique: true,
-          }),
-          new Index({
-            name: "IDX_BALANCE_SNAPSHOTS_CREATED_AT",
-            columnNames: ["created_at"],
-          }),
-        ],
-        foreignKeys: [
-          new ForeignKey({
-            name: "FK_BALANCE_SNAPSHOTS_ACCOUNT_ID",
-            columnNames: ["account_id"],
-            referencedTableName: "ledger_accounts",
-            referencedColumnNames: ["id"],
-            onDelete: "CASCADE",
-            onUpdate: "CASCADE",
-          }),
-        ],
+        // Indexes will be created via queryRunner.query() after table creation
+        // Foreign keys will be added via ALTER TABLE commands
       }),
       true,
     );
@@ -182,7 +143,7 @@ export class CreateBalanceSnapshotsTable1755218300003 implements MigrationInterf
         v_snapshot_id UUID;
         v_previous_date DATE;
       BEGIN
-        -- Get account currency
+        // Get account currency
         SELECT currency INTO v_currency 
         FROM ledger_accounts 
         WHERE id = p_account_id;
@@ -191,10 +152,10 @@ export class CreateBalanceSnapshotsTable1755218300003 implements MigrationInterf
           RAISE EXCEPTION 'Account not found: %', p_account_id;
         END IF;
         
-        -- Get previous business day
+        // Get previous business day
         v_previous_date := p_snapshot_date - INTERVAL '1 day';
         
-        -- Get opening balance (closing balance from previous day or account balance)
+        // Get opening balance (closing balance from previous day or account balance)
         SELECT COALESCE(closing_balance, 0) INTO v_opening_balance
         FROM balance_snapshots
         WHERE account_id = p_account_id 
@@ -202,13 +163,13 @@ export class CreateBalanceSnapshotsTable1755218300003 implements MigrationInterf
         ORDER BY snapshot_time DESC
         LIMIT 1;
         
-        -- If no previous snapshot, use current account balance minus today's transactions
+        // If no previous snapshot, use current account balance minus today's transactions
         IF v_opening_balance IS NULL THEN
           SELECT balance INTO v_opening_balance
           FROM ledger_accounts
           WHERE id = p_account_id;
           
-          -- Subtract today's net transactions to get opening balance
+          // Subtract today's net transactions to get opening balance
           SELECT COALESCE(SUM(
             CASE 
               WHEN te.entry_type = 'DEBIT' THEN -te.amount
@@ -225,7 +186,7 @@ export class CreateBalanceSnapshotsTable1755218300003 implements MigrationInterf
           v_opening_balance := v_opening_balance - v_closing_balance;
         END IF;
         
-        -- Calculate totals for the day
+        // Calculate totals for the day
         SELECT 
           COALESCE(SUM(CASE WHEN te.entry_type = 'DEBIT' THEN te.amount ELSE 0 END), 0),
           COALESCE(SUM(CASE WHEN te.entry_type = 'CREDIT' THEN te.amount ELSE 0 END), 0),
@@ -237,10 +198,10 @@ export class CreateBalanceSnapshotsTable1755218300003 implements MigrationInterf
           AND DATE(t.created_at) = p_snapshot_date
           AND t.status = 'COMPLETED';
         
-        -- Calculate closing balance
+        // Calculate closing balance
         v_closing_balance := v_opening_balance + v_total_credits - v_total_debits;
         
-        -- Insert or update snapshot
+        // Insert or update snapshot
         INSERT INTO balance_snapshots (
           account_id,
           snapshot_date,
@@ -276,7 +237,7 @@ export class CreateBalanceSnapshotsTable1755218300003 implements MigrationInterf
       $$ LANGUAGE plpgsql;
     `);
 
-    -- Create function to auto-generate snapshots for all accounts
+    // Create function to auto-generate snapshots for all accounts
     await queryRunner.query(`
       CREATE OR REPLACE FUNCTION generate_all_daily_snapshots(
         p_snapshot_date DATE DEFAULT CURRENT_DATE
@@ -297,6 +258,18 @@ export class CreateBalanceSnapshotsTable1755218300003 implements MigrationInterf
       END;
       $$ LANGUAGE plpgsql;
     `);
+
+    // Create indexes
+    await queryRunner.query(`CREATE INDEX IDX_BALANCE_SNAPSHOTS_ACCOUNT_ID ON balance_snapshots (account_id)`);
+    await queryRunner.query(`CREATE INDEX IDX_BALANCE_SNAPSHOTS_DATE ON balance_snapshots (snapshot_date)`);
+    await queryRunner.query(`CREATE INDEX IDX_BALANCE_SNAPSHOTS_TYPE ON balance_snapshots (snapshot_type)`);
+    await queryRunner.query(`CREATE INDEX IDX_BALANCE_SNAPSHOTS_CURRENCY ON balance_snapshots (currency)`);
+    await queryRunner.query(`CREATE INDEX IDX_BALANCE_SNAPSHOTS_RECONCILED ON balance_snapshots (is_reconciled)`);
+    await queryRunner.query(`CREATE UNIQUE INDEX IDX_BALANCE_SNAPSHOTS_ACCOUNT_DATE ON balance_snapshots (account_id, snapshot_date)`);
+    await queryRunner.query(`CREATE INDEX IDX_BALANCE_SNAPSHOTS_CREATED_AT ON balance_snapshots (created_at)`);
+
+    // Add foreign key constraints
+    await queryRunner.query(`ALTER TABLE balance_snapshots ADD CONSTRAINT FK_BALANCE_SNAPSHOTS_ACCOUNT_ID FOREIGN KEY (account_id) REFERENCES ledger_accounts(id) ON DELETE CASCADE ON UPDATE CASCADE`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

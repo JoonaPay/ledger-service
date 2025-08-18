@@ -7,6 +7,7 @@ import {
   TransactionOrmEntity, 
   TransactionEntryOrmEntity,
   EntryType,
+  TransactionType,
   TransactionStatus,
   AccountType,
   NormalBalance
@@ -143,7 +144,7 @@ export class DoubleEntryService {
       const transactionEntity = queryRunner.manager.create(TransactionOrmEntity, {
         id: transaction.transactionId,
         transactionReference: transaction.reference,
-        transactionType: 'TRANSFER', // Default type
+        transactionType: TransactionType.TRANSFER, // Default type
         amount: validation.totalDebits, // Use total amount
         currency: accounts[0]?.currency || 'USD',
         description: transaction.description,

@@ -20,6 +20,12 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const ledger_module_1 = require("./modules/ledger/ledger.module");
 const configuration_1 = require("./shared/config/configuration");
+const transaction_module_1 = require("./modules/transaction/transaction.module");
+const account_module_1 = require("./modules/account/account.module");
+const transaction_entry_module_1 = require("./modules/transaction-entry/transaction-entry.module");
+const orm_entities_1 = require("./modules/transaction/infrastructure/orm-entities");
+const orm_entities_2 = require("./modules/account/infrastructure/orm-entities");
+const orm_entities_3 = require("./modules/transaction-entry/infrastructure/orm-entities");
 const env_validation_1 = require("./shared/config/env.validation");
 const metrics_module_1 = require("./shared/metrics/metrics.module");
 const metrics_interceptor_1 = require("./shared/interceptors/metrics.interceptor");
@@ -45,7 +51,12 @@ exports.AppModule = AppModule = __decorate([
                     url: configService.get('database.url'),
                     synchronize: configService.get('database.synchronize'),
                     logging: configService.get('database.logging'),
-                    entities: [__dirname + '/**/*.orm-entity{.ts,.js}'],
+                    entities: [
+                        ...orm_entities_1.OrmEntities,
+                        ...orm_entities_2.OrmEntities,
+                        ...orm_entities_3.OrmEntities,
+                        __dirname + '/**/*.orm-entity{.ts,.js}'
+                    ],
                     migrations: [__dirname + '/migrations/*{.ts,.js}'],
                     autoLoadEntities: true,
                     retryAttempts: 3,
@@ -75,6 +86,9 @@ exports.AppModule = AppModule = __decorate([
             metrics_module_1.MetricsModule,
             kafka_module_1.KafkaModule,
             ledger_module_1.LedgerModule,
+            transaction_module_1.TransactionModule,
+            account_module_1.AccountModule,
+            transaction_entry_module_1.TransactionEntryModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

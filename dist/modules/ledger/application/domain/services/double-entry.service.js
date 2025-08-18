@@ -91,7 +91,7 @@ let DoubleEntryService = class DoubleEntryService {
             const transactionEntity = queryRunner.manager.create(orm_entities_1.TransactionOrmEntity, {
                 id: transaction.transactionId,
                 transactionReference: transaction.reference,
-                transactionType: 'TRANSFER',
+                transactionType: orm_entities_1.TransactionType.TRANSFER,
                 amount: validation.totalDebits,
                 currency: accounts[0]?.currency || 'USD',
                 description: transaction.description,

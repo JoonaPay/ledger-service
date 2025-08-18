@@ -1,0 +1,1 @@
+{"version":3,"file":"transaction.entity.js","sourceRoot":"","sources":["../../../../../src/modules/transaction/domain/entities/transaction.entity.ts"],"names":[],"mappings":";;;AAAA,mFAAmE;AASnE,MAAa,iBAAkB,SAAQ,qCAAgB;IAKrD,YAAY,KAA6B;QACvC,KAAK,CAAC,KAAK,CAAC,EAAE,CAAC,CAAC;IAIlB,CAAC;CAKF;AAfD,8CAeC"}

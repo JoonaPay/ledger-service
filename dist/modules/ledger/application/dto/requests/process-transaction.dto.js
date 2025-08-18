@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReverseTransactionDto = exports.ProcessTransactionDto = void 0;
 const class_validator_1 = require("class-validator");
@@ -24,7 +23,7 @@ __decorate([
         example: orm_entities_1.TransactionType.TRANSFER,
     }),
     (0, class_validator_1.IsEnum)(orm_entities_1.TransactionType),
-    __metadata("design:type", typeof (_a = typeof orm_entities_1.TransactionType !== "undefined" && orm_entities_1.TransactionType) === "function" ? _a : Object)
+    __metadata("design:type", String)
 ], ProcessTransactionDto.prototype, "type", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
@@ -108,7 +107,7 @@ __decorate([
     }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEnum)(orm_entities_1.TransactionSource),
-    __metadata("design:type", typeof (_b = typeof orm_entities_1.TransactionSource !== "undefined" && orm_entities_1.TransactionSource) === "function" ? _b : Object)
+    __metadata("design:type", String)
 ], ProcessTransactionDto.prototype, "source", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({

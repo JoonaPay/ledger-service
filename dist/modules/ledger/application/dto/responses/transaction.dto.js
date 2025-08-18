@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionSearchResultDto = exports.TransactionResultDto = exports.TransactionDto = exports.TransactionEntryDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
@@ -82,7 +81,7 @@ __decorate([
         enum: orm_entities_1.TransactionType,
         example: orm_entities_1.TransactionType.TRANSFER,
     }),
-    __metadata("design:type", typeof (_a = typeof orm_entities_1.TransactionType !== "undefined" && orm_entities_1.TransactionType) === "function" ? _a : Object)
+    __metadata("design:type", String)
 ], TransactionDto.prototype, "transactionType", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
@@ -146,7 +145,7 @@ __decorate([
         enum: orm_entities_1.TransactionSource,
         example: orm_entities_1.TransactionSource.API,
     }),
-    __metadata("design:type", typeof (_b = typeof orm_entities_1.TransactionSource !== "undefined" && orm_entities_1.TransactionSource) === "function" ? _b : Object)
+    __metadata("design:type", String)
 ], TransactionDto.prototype, "source", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
@@ -154,7 +153,7 @@ __decorate([
         enum: orm_entities_1.TransactionStatus,
         example: orm_entities_1.TransactionStatus.COMPLETED,
     }),
-    __metadata("design:type", typeof (_c = typeof orm_entities_1.TransactionStatus !== "undefined" && orm_entities_1.TransactionStatus) === "function" ? _c : Object)
+    __metadata("design:type", String)
 ], TransactionDto.prototype, "status", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
@@ -211,7 +210,7 @@ __decorate([
         enum: orm_entities_1.ComplianceStatus,
         example: orm_entities_1.ComplianceStatus.CLEAN,
     }),
-    __metadata("design:type", typeof (_d = typeof orm_entities_1.ComplianceStatus !== "undefined" && orm_entities_1.ComplianceStatus) === "function" ? _d : Object)
+    __metadata("design:type", String)
 ], TransactionDto.prototype, "complianceStatus", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({
@@ -292,7 +291,7 @@ __decorate([
         enum: orm_entities_1.TransactionStatus,
         example: orm_entities_1.TransactionStatus.COMPLETED,
     }),
-    __metadata("design:type", typeof (_e = typeof orm_entities_1.TransactionStatus !== "undefined" && orm_entities_1.TransactionStatus) === "function" ? _e : Object)
+    __metadata("design:type", String)
 ], TransactionResultDto.prototype, "status", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({

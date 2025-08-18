@@ -195,70 +195,6 @@ class CreateTransactionsTable1755218300001 {
                     default: "CURRENT_TIMESTAMP",
                 },
             ],
-            indices: [
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_ACCOUNT_ID",
-                    columnNames: ["account_id"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_REFERENCE",
-                    columnNames: ["transaction_reference"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_TYPE",
-                    columnNames: ["transaction_type"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_STATUS",
-                    columnNames: ["status"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_COUNTERPARTY",
-                    columnNames: ["counterparty_account_id"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_BLNK_ID",
-                    columnNames: ["blnk_transaction_id"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_EXTERNAL_REF",
-                    columnNames: ["external_reference"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_SOURCE",
-                    columnNames: ["source"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_COMPLIANCE",
-                    columnNames: ["compliance_status"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_VALUE_DATE",
-                    columnNames: ["value_date"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_PROCESSED_AT",
-                    columnNames: ["processed_at"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_CREATED_AT",
-                    columnNames: ["created_at"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_TRANSACTIONS_REVERSAL",
-                    columnNames: ["is_reversal", "reversal_transaction_id"],
-                }),
-            ],
-            foreignKeys: [
-                new typeorm_1.ForeignKey({
-                    name: "FK_TRANSACTIONS_ACCOUNT_ID",
-                    columnNames: ["account_id"],
-                    referencedTableName: "ledger_accounts",
-                    referencedColumnNames: ["id"],
-                    onDelete: "CASCADE",
-                    onUpdate: "CASCADE",
-                }),
-            ],
         }), true);
         await queryRunner.query(`
       CREATE TRIGGER update_transactions_updated_at 
@@ -274,7 +210,7 @@ class CreateTransactionsTable1755218300001 {
         exists_check INTEGER;
       BEGIN
         LOOP
-          -- Generate transaction reference: TXN + YYYYMMDD + 8 random digits
+          // Generate transaction reference: TXN + YYYYMMDD + 8 random digits
           new_reference := 'TXN' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || LPAD(FLOOR(RANDOM() * 100000000)::TEXT, 8, '0');
           
           SELECT COUNT(*) INTO exists_check 
@@ -307,6 +243,20 @@ class CreateTransactionsTable1755218300001 {
       FOR EACH ROW
       EXECUTE FUNCTION set_transaction_reference();
     `);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_ACCOUNT_ID ON transactions (account_id)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_REFERENCE ON transactions (transaction_reference)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_TYPE ON transactions (transaction_type)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_STATUS ON transactions (status)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_COUNTERPARTY ON transactions (counterparty_account_id)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_BLNK_ID ON transactions (blnk_transaction_id)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_EXTERNAL_REF ON transactions (external_reference)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_SOURCE ON transactions (source)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_COMPLIANCE ON transactions (compliance_status)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_VALUE_DATE ON transactions (value_date)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_PROCESSED_AT ON transactions (processed_at)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_CREATED_AT ON transactions (created_at)`);
+        await queryRunner.query(`CREATE INDEX IDX_TRANSACTIONS_REVERSAL ON transactions (is_reversal, reversal_transaction_id)`);
+        await queryRunner.query(`ALTER TABLE transactions ADD CONSTRAINT FK_TRANSACTIONS_ACCOUNT_ID FOREIGN KEY (account_id) REFERENCES ledger_accounts(id) ON DELETE CASCADE ON UPDATE CASCADE`);
     }
     async down(queryRunner) {
         await queryRunner.query(`DROP TRIGGER IF EXISTS set_transaction_reference_trigger ON transactions`);

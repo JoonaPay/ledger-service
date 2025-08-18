@@ -119,40 +119,6 @@ class CreateLedgerAccountsTable1755218300000 {
                     isNullable: true,
                 },
             ],
-            indices: [
-                new typeorm_1.Index({
-                    name: "IDX_LEDGER_ACCOUNTS_IDENTITY_ACCOUNT_ID",
-                    columnNames: ["identity_account_id"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_LEDGER_ACCOUNTS_USER_ID",
-                    columnNames: ["user_id"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_LEDGER_ACCOUNTS_TYPE",
-                    columnNames: ["account_type"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_LEDGER_ACCOUNTS_CURRENCY",
-                    columnNames: ["currency"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_LEDGER_ACCOUNTS_BLNK_ID",
-                    columnNames: ["blnk_account_id"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_LEDGER_ACCOUNTS_PARENT",
-                    columnNames: ["parent_account_id"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_LEDGER_ACCOUNTS_STATUS",
-                    columnNames: ["status"],
-                }),
-                new typeorm_1.Index({
-                    name: "IDX_LEDGER_ACCOUNTS_ACTIVE",
-                    columnNames: ["is_active", "deleted_at"],
-                }),
-            ],
         }), true);
         await queryRunner.query(`
       CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -169,6 +135,14 @@ class CreateLedgerAccountsTable1755218300000 {
       FOR EACH ROW 
       EXECUTE FUNCTION update_updated_at_column();
     `);
+        await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_IDENTITY_ACCOUNT_ID ON ledger_accounts (identity_account_id)`);
+        await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_USER_ID ON ledger_accounts (user_id)`);
+        await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_TYPE ON ledger_accounts (account_type)`);
+        await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_CURRENCY ON ledger_accounts (currency)`);
+        await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_BLNK_ID ON ledger_accounts (blnk_account_id)`);
+        await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_PARENT ON ledger_accounts (parent_account_id)`);
+        await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_STATUS ON ledger_accounts (status)`);
+        await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_ACTIVE ON ledger_accounts (is_active, deleted_at)`);
     }
     async down(queryRunner) {
         await queryRunner.query(`DROP TRIGGER IF EXISTS update_ledger_accounts_updated_at ON ledger_accounts`);

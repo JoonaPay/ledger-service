@@ -1,6 +1,16 @@
+import { LedgerAccountOrmEntity } from './ledger-account.entity';
+import { TransactionOrmEntity } from './transaction.entity';
+import { TransactionEntryOrmEntity } from './transaction-entry.entity';
+import { BalanceSnapshotOrmEntity } from './balance-snapshot.entity';
+import { ReconciliationLogOrmEntity } from './reconciliation-log.entity';
 export { LedgerAccountOrmEntity } from './ledger-account.entity';
 export { TransactionOrmEntity } from './transaction.entity';
 export { TransactionEntryOrmEntity } from './transaction-entry.entity';
 export { BalanceSnapshotOrmEntity } from './balance-snapshot.entity';
 export { ReconciliationLogOrmEntity } from './reconciliation-log.entity';
-export declare const OrmEntities: any[];
+export { AccountType, AccountStatus, NormalBalance } from './ledger-account.entity';
+export { TransactionType, TransactionStatus, TransactionSource, ComplianceStatus } from './transaction.entity';
+export { EntryType } from './transaction-entry.entity';
+export { SnapshotType } from './balance-snapshot.entity';
+export { ReconciliationType, ReconciliationStatus, ResolutionAction, BlnkSyncStatus } from './reconciliation-log.entity';
+export declare const OrmEntities: (typeof TransactionEntryOrmEntity | typeof TransactionOrmEntity | typeof LedgerAccountOrmEntity | typeof BalanceSnapshotOrmEntity | typeof ReconciliationLogOrmEntity)[];

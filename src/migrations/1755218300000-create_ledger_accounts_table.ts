@@ -120,40 +120,7 @@ export class CreateLedgerAccountsTable1755218300000 implements MigrationInterfac
             isNullable: true,
           },
         ],
-        indices: [
-          new Index({
-            name: "IDX_LEDGER_ACCOUNTS_IDENTITY_ACCOUNT_ID",
-            columnNames: ["identity_account_id"],
-          }),
-          new Index({
-            name: "IDX_LEDGER_ACCOUNTS_USER_ID",
-            columnNames: ["user_id"],
-          }),
-          new Index({
-            name: "IDX_LEDGER_ACCOUNTS_TYPE",
-            columnNames: ["account_type"],
-          }),
-          new Index({
-            name: "IDX_LEDGER_ACCOUNTS_CURRENCY",
-            columnNames: ["currency"],
-          }),
-          new Index({
-            name: "IDX_LEDGER_ACCOUNTS_BLNK_ID",
-            columnNames: ["blnk_account_id"],
-          }),
-          new Index({
-            name: "IDX_LEDGER_ACCOUNTS_PARENT",
-            columnNames: ["parent_account_id"],
-          }),
-          new Index({
-            name: "IDX_LEDGER_ACCOUNTS_STATUS",
-            columnNames: ["status"],
-          }),
-          new Index({
-            name: "IDX_LEDGER_ACCOUNTS_ACTIVE",
-            columnNames: ["is_active", "deleted_at"],
-          }),
-        ],
+        // Indexes will be created via queryRunner.query() after table creation
       }),
       true,
     );
@@ -175,6 +142,16 @@ export class CreateLedgerAccountsTable1755218300000 implements MigrationInterfac
       FOR EACH ROW 
       EXECUTE FUNCTION update_updated_at_column();
     `);
+
+    // Create indexes
+    await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_IDENTITY_ACCOUNT_ID ON ledger_accounts (identity_account_id)`);
+    await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_USER_ID ON ledger_accounts (user_id)`);
+    await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_TYPE ON ledger_accounts (account_type)`);
+    await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_CURRENCY ON ledger_accounts (currency)`);
+    await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_BLNK_ID ON ledger_accounts (blnk_account_id)`);
+    await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_PARENT ON ledger_accounts (parent_account_id)`);
+    await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_STATUS ON ledger_accounts (status)`);
+    await queryRunner.query(`CREATE INDEX IDX_LEDGER_ACCOUNTS_ACTIVE ON ledger_accounts (is_active, deleted_at)`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

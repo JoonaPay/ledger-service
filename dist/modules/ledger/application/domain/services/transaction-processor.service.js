@@ -126,12 +126,12 @@ let TransactionProcessorService = TransactionProcessorService_1 = class Transact
             await this.transactionRepository.update(originalTransactionId, {
                 status: orm_entities_1.TransactionStatus.REVERSED,
                 reversalTransactionId: reversalId,
-                metadata: {
+                metadata: () => `jsonb_set(metadata, '{}', '${JSON.stringify({
                     ...originalTransaction.metadata,
                     reversedAt: new Date().toISOString(),
                     reversalReason: reason,
                     reversedBy: initiatedBy,
-                },
+                })}'::jsonb)`,
             });
             const reversalTransaction = await this.transactionRepository.findOne({
                 where: { id: reversalId },

@@ -12,6 +12,7 @@ export interface BlnkAccount {
     organization_id: string;
     created_at: string;
     updated_at: string;
+    metadata?: Record<string, any>;
 }
 export interface BlnkTransaction {
     transaction_id: string;

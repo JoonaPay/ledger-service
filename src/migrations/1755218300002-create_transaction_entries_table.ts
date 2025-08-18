@@ -85,54 +85,8 @@ export class CreateTransactionEntriesTable1755218300002 implements MigrationInte
             default: "CURRENT_TIMESTAMP",
           },
         ],
-        indices: [
-          new Index({
-            name: "IDX_TRANSACTION_ENTRIES_TRANSACTION_ID",
-            columnNames: ["transaction_id"],
-          }),
-          new Index({
-            name: "IDX_TRANSACTION_ENTRIES_ACCOUNT_ID",
-            columnNames: ["account_id"],
-          }),
-          new Index({
-            name: "IDX_TRANSACTION_ENTRIES_TYPE",
-            columnNames: ["entry_type"],
-          }),
-          new Index({
-            name: "IDX_TRANSACTION_ENTRIES_CURRENCY",
-            columnNames: ["currency"],
-          }),
-          new Index({
-            name: "IDX_TRANSACTION_ENTRIES_CREATED_AT",
-            columnNames: ["created_at"],
-          }),
-          new Index({
-            name: "IDX_TRANSACTION_ENTRIES_REVERSAL",
-            columnNames: ["is_reversal", "reversal_entry_id"],
-          }),
-          new Index({
-            name: "IDX_TRANSACTION_ENTRIES_SEQUENCE",
-            columnNames: ["transaction_id", "entry_sequence"],
-          }),
-        ],
-        foreignKeys: [
-          new ForeignKey({
-            name: "FK_TRANSACTION_ENTRIES_TRANSACTION_ID",
-            columnNames: ["transaction_id"],
-            referencedTableName: "transactions",
-            referencedColumnNames: ["id"],
-            onDelete: "CASCADE",
-            onUpdate: "CASCADE",
-          }),
-          new ForeignKey({
-            name: "FK_TRANSACTION_ENTRIES_ACCOUNT_ID",
-            columnNames: ["account_id"],
-            referencedTableName: "ledger_accounts",
-            referencedColumnNames: ["id"],
-            onDelete: "RESTRICT",
-            onUpdate: "CASCADE",
-          }),
-        ],
+        // Indexes will be created via queryRunner.query() after table creation
+        // Foreign keys will be added via ALTER TABLE commands
       }),
       true,
     );
@@ -154,7 +108,7 @@ export class CreateTransactionEntriesTable1755218300002 implements MigrationInte
         total_credits DECIMAL(19,4);
         entry_count INTEGER;
       BEGIN
-        -- Get totals for this transaction
+        // Get totals for this transaction
         SELECT 
           COALESCE(SUM(CASE WHEN entry_type = 'DEBIT' THEN amount ELSE 0 END), 0),
           COALESCE(SUM(CASE WHEN entry_type = 'CREDIT' THEN amount ELSE 0 END), 0),
@@ -163,12 +117,12 @@ export class CreateTransactionEntriesTable1755218300002 implements MigrationInte
         FROM transaction_entries 
         WHERE transaction_id = NEW.transaction_id;
         
-        -- Validate that debits equal credits (allow small rounding differences)
+        // Validate that debits equal credits (allow small rounding differences)
         IF ABS(total_debits - total_credits) > 0.01 THEN
           RAISE EXCEPTION 'Transaction entries must balance: debits=% credits=%', total_debits, total_credits;
         END IF;
         
-        -- Ensure at least 2 entries for double-entry
+        // Ensure at least 2 entries for double-entry
         IF entry_count < 2 THEN
           RAISE EXCEPTION 'Transaction must have at least 2 entries for double-entry bookkeeping';
         END IF;
@@ -185,6 +139,19 @@ export class CreateTransactionEntriesTable1755218300002 implements MigrationInte
       FOR EACH ROW
       EXECUTE FUNCTION validate_transaction_balance();
     `);
+
+    // Create indexes
+    await queryRunner.query(`CREATE INDEX IDX_TRANSACTION_ENTRIES_TRANSACTION_ID ON transaction_entries (transaction_id)`);
+    await queryRunner.query(`CREATE INDEX IDX_TRANSACTION_ENTRIES_ACCOUNT_ID ON transaction_entries (account_id)`);
+    await queryRunner.query(`CREATE INDEX IDX_TRANSACTION_ENTRIES_TYPE ON transaction_entries (entry_type)`);
+    await queryRunner.query(`CREATE INDEX IDX_TRANSACTION_ENTRIES_CURRENCY ON transaction_entries (currency)`);
+    await queryRunner.query(`CREATE INDEX IDX_TRANSACTION_ENTRIES_CREATED_AT ON transaction_entries (created_at)`);
+    await queryRunner.query(`CREATE INDEX IDX_TRANSACTION_ENTRIES_REVERSAL ON transaction_entries (is_reversal, reversal_entry_id)`);
+    await queryRunner.query(`CREATE INDEX IDX_TRANSACTION_ENTRIES_SEQUENCE ON transaction_entries (transaction_id, entry_sequence)`);
+
+    // Add foreign key constraints
+    await queryRunner.query(`ALTER TABLE transaction_entries ADD CONSTRAINT FK_TRANSACTION_ENTRIES_TRANSACTION_ID FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE ON UPDATE CASCADE`);
+    await queryRunner.query(`ALTER TABLE transaction_entries ADD CONSTRAINT FK_TRANSACTION_ENTRIES_ACCOUNT_ID FOREIGN KEY (account_id) REFERENCES ledger_accounts(id) ON DELETE RESTRICT ON UPDATE CASCADE`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
