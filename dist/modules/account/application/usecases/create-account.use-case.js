@@ -19,7 +19,15 @@ let CreateAccountUseCase = class CreateAccountUseCase {
     }
     async execute(command) {
         const entity = new account_entity_1.AccountEntity({
-            id: undefined,
+            identityAccountId: command.identityAccountId,
+            userId: command.userId,
+            accountName: command.accountName,
+            accountType: command.accountType,
+            currency: command.currency,
+            normalBalance: command.normalBalance,
+            parentAccountId: command.parentAccountId,
+            accountNumber: command.accountNumber,
+            metadata: command.metadata,
         });
         return this.repository.create(entity);
     }

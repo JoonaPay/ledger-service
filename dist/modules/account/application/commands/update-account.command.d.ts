@@ -9,5 +9,5 @@ export declare class UpdateAccountCommand {
 export declare class UpdateAccountHandler implements ICommandHandler<UpdateAccountCommand> {
     private readonly useCase;
     constructor(useCase: UpdateAccountUseCase);
-    execute(command: UpdateAccountCommand): Promise<import("../domain/entities").AccountEntity>;
+    execute(command: UpdateAccountCommand): Promise<void>;
 }

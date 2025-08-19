@@ -10,7 +10,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateTransactionUseCase = void 0;
-const transaction_entity_1 = require("../../domain/entities/transaction.entity");
 const transaction_repository_1 = require("../../infrastructure/repositories/transaction.repository");
 const common_1 = require("@nestjs/common");
 let UpdateTransactionUseCase = class UpdateTransactionUseCase {
@@ -18,8 +17,7 @@ let UpdateTransactionUseCase = class UpdateTransactionUseCase {
         this.repository = repository;
     }
     async execute(command) {
-        const entity = new transaction_entity_1.TransactionEntity({ id: command.id });
-        return this.repository.update(command.id, entity);
+        throw new Error('Not implemented');
     }
 };
 exports.UpdateTransactionUseCase = UpdateTransactionUseCase;

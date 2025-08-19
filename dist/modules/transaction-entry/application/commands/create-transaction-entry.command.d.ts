@@ -8,5 +8,5 @@ export declare class CreateTransactionEntryCommand {
 export declare class CreateTransactionEntryHandler implements ICommandHandler<CreateTransactionEntryCommand> {
     private readonly useCase;
     constructor(useCase: CreateTransactionEntryUseCase);
-    execute(command: CreateTransactionEntryCommand): Promise<import("../domain/entities").TransactionEntryEntity>;
+    execute(command: CreateTransactionEntryCommand): Promise<void>;
 }

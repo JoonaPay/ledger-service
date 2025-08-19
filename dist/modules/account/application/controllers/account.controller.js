@@ -16,28 +16,39 @@ exports.AccountController = void 0;
 const common_1 = require("@nestjs/common");
 const cqrs_1 = require("@nestjs/cqrs");
 const create_account_command_1 = require("../commands/create-account.command");
+const update_account_command_1 = require("../commands/update-account.command");
+const delete_account_command_1 = require("../commands/delete-account.command");
 const create_account_dto_1 = require("../dto/requests/create-account.dto");
+const update_account_dto_1 = require("../dto/requests/update-account.dto");
+const get_account_use_case_1 = require("../usecases/get-account.use-case");
+const list_accounts_use_case_1 = require("../usecases/list-accounts.use-case");
 let AccountController = class AccountController {
-    constructor(commandBus, queryBus) {
+    constructor(commandBus, queryBus, getAccountUseCase, listAccountsUseCase) {
         this.commandBus = commandBus;
         this.queryBus = queryBus;
+        this.getAccountUseCase = getAccountUseCase;
+        this.listAccountsUseCase = listAccountsUseCase;
     }
     create(dto) {
         const contextId = "extracted-from-token";
         const command = new create_account_command_1.CreateAccountCommand(dto, contextId);
         return this.commandBus.execute(command);
     }
-    findAll() {
-        throw new Error("Not implemented");
+    async findAll() {
+        return this.listAccountsUseCase.execute();
     }
-    findOne(id) {
-        throw new Error("Not implemented");
+    async findOne(id) {
+        return this.getAccountUseCase.execute(id);
     }
-    update(id, dto) {
-        throw new Error("Not implemented");
+    async update(id, dto) {
+        const contextId = "extracted-from-token";
+        const command = new update_account_command_1.UpdateAccountCommand(id, dto, contextId);
+        return this.commandBus.execute(command);
     }
-    delete(id) {
-        throw new Error("Not implemented");
+    async delete(id) {
+        const contextId = "extracted-from-token";
+        const command = new delete_account_command_1.DeleteAccountCommand({ id }, contextId);
+        return this.commandBus.execute(command);
     }
 };
 exports.AccountController = AccountController;
@@ -52,33 +63,35 @@ __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AccountController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(":id"),
     __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AccountController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Put)(":id"),
     __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, update_account_dto_1.UpdateAccountDto]),
+    __metadata("design:returntype", Promise)
 ], AccountController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(":id"),
     __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AccountController.prototype, "delete", null);
 exports.AccountController = AccountController = __decorate([
     (0, common_1.Controller)("accounts"),
     __metadata("design:paramtypes", [cqrs_1.CommandBus,
-        cqrs_1.QueryBus])
+        cqrs_1.QueryBus,
+        get_account_use_case_1.GetAccountUseCase,
+        list_accounts_use_case_1.ListAccountsUseCase])
 ], AccountController);
 //# sourceMappingURL=account.controller.js.map

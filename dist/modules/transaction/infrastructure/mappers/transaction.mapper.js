@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionMapper = void 0;
 const transaction_orm_entity_1 = require("../orm-entities/transaction.orm-entity");
-const transaction_entity_1 = require("../../domain/entities/transaction.entity");
 const common_1 = require("@nestjs/common");
 const base_mapper_1 = require("../../../../core/infrastructure/base-mapper");
 let TransactionMapper = class TransactionMapper extends base_mapper_1.BaseMapper {
@@ -23,10 +22,7 @@ let TransactionMapper = class TransactionMapper extends base_mapper_1.BaseMapper
         return ormEntity;
     }
     toDomain(ormEntity) {
-        const entity = new transaction_entity_1.TransactionEntity({
-            id: ormEntity.id,
-        });
-        return entity;
+        throw new Error('Not implemented');
     }
 };
 exports.TransactionMapper = TransactionMapper;

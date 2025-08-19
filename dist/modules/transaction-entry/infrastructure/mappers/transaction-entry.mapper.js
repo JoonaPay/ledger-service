@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionEntryMapper = void 0;
 const transaction_entry_orm_entity_1 = require("../orm-entities/transaction-entry.orm-entity");
-const transaction_entry_entity_1 = require("../../domain/entities/transaction-entry.entity");
 const common_1 = require("@nestjs/common");
 const base_mapper_1 = require("../../../../core/infrastructure/base-mapper");
 let TransactionEntryMapper = class TransactionEntryMapper extends base_mapper_1.BaseMapper {
@@ -16,9 +15,7 @@ let TransactionEntryMapper = class TransactionEntryMapper extends base_mapper_1.
         if (!ormEntity) {
             throw new Error('ORM entity is required');
         }
-        return new transaction_entry_entity_1.TransactionEntryEntity({
-            id: ormEntity.id,
-        });
+        throw new Error('Not implemented');
     }
     toOrm(domainEntity) {
         if (!domainEntity) {

@@ -15,6 +15,15 @@ const create_account_use_case_1 = require("../usecases/create-account.use-case")
 class CreateAccountCommand {
     constructor(data, contextId) {
         this.contextId = contextId;
+        this.identityAccountId = data.identity_account_id;
+        this.userId = data.user_id;
+        this.accountName = data.account_name;
+        this.accountType = data.account_type;
+        this.currency = data.currency;
+        this.normalBalance = data.normal_balance;
+        this.parentAccountId = data.parent_account_id;
+        this.accountNumber = data.account_number;
+        this.metadata = data.metadata;
     }
 }
 exports.CreateAccountCommand = CreateAccountCommand;

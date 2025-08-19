@@ -1,7 +1,55 @@
 import { BaseDomainEntity } from '@core/domain/base-domain-entity';
+import { AccountType, AccountStatus, NormalBalance } from '@modules/ledger/infrastructure/orm-entities';
 export interface AccountEntityProps {
     id?: string;
+    identityAccountId: string;
+    userId: string;
+    accountName: string;
+    accountType: AccountType;
+    currency: string;
+    balance?: number;
+    creditBalance?: number;
+    debitBalance?: number;
+    normalBalance: NormalBalance;
+    status?: AccountStatus;
+    parentAccountId?: string;
+    accountNumber?: string;
+    blnkAccountId?: string;
+    metadata?: Record<string, any>;
 }
 export declare class AccountEntity extends BaseDomainEntity {
+    private _identityAccountId;
+    private _userId;
+    private _accountName;
+    private _accountType;
+    private _currency;
+    private _balance;
+    private _creditBalance;
+    private _debitBalance;
+    private _normalBalance;
+    private _status;
+    private _parentAccountId?;
+    private _accountNumber?;
+    private _blnkAccountId?;
+    private _metadata?;
     constructor(props: AccountEntityProps);
+    debit(amount: number): void;
+    credit(amount: number): void;
+    suspend(): void;
+    activate(): void;
+    close(): void;
+    get identityAccountId(): string;
+    get userId(): string;
+    get accountName(): string;
+    get accountType(): AccountType;
+    get currency(): string;
+    get balance(): number;
+    get creditBalance(): number;
+    get debitBalance(): number;
+    get normalBalance(): NormalBalance;
+    get status(): AccountStatus;
+    get parentAccountId(): string | undefined;
+    get accountNumber(): string | undefined;
+    get blnkAccountId(): string | undefined;
+    get metadata(): Record<string, any> | undefined;
 }
