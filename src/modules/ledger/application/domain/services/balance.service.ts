@@ -347,14 +347,14 @@ export class BalanceService {
    */
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async createDailySnapshots(): Promise<void> {
-    console.log('Starting daily balance snapshot creation...');
+    // console.log('Starting daily balance snapshot creation...');
     
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     
     try {
       const snapshotCount = await this.createSnapshotsForAllAccounts(yesterday, SnapshotType.DAILY);
-      console.log(`Created ${snapshotCount} daily balance snapshots for ${yesterday.toISOString().split('T')[0]}`);
+      // console.log(`Created ${snapshotCount} daily balance snapshots for ${yesterday.toISOString().split('T')[0]}`);
     } catch (error) {
       console.error('Failed to create daily snapshots:', error);
     }

@@ -8,7 +8,7 @@ export class UpdateTransactionUseCase {
   constructor(private readonly repository: TransactionRepository) {}
 
   async execute(command: UpdateTransactionCommand) {
-    const entity = new TransactionEntity({ id: command.id });
-    return this.repository.update(command.id, entity);
+    // TODO: Implement proper entity update with business logic
+    throw new Error('Not implemented');
   }
 }

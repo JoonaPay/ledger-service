@@ -8,10 +8,7 @@ export class CreateTransactionUseCase {
   constructor(private readonly repository: TransactionRepository) {}
 
   async execute(command: CreateTransactionCommand) {
-    const entity = new TransactionEntity({
-      id: undefined,
-      // Map command properties to entity props
-    });
-    return this.repository.create(entity);
+    // TODO: Implement proper entity creation with business logic
+    throw new Error('Not implemented');
   }
 }

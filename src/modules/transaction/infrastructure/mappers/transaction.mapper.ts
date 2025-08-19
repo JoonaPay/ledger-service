@@ -22,13 +22,7 @@ export class TransactionMapper extends BaseMapper<TransactionEntity, Transaction
   }
 
   toDomain(ormEntity: TransactionOrmEntity): TransactionEntity {
-    const entity = new TransactionEntity({
-      id: ormEntity.id,
-      // Map your properties from snake_case to camelCase
-      // Example: amount: ormEntity.amount,
-      // Example: description: ormEntity.description,
-    });
-    
-    return entity;
+    // TODO: Implement proper mapping from ORM to domain entity
+    throw new Error('Not implemented');
   }
 }

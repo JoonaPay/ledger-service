@@ -10,12 +10,8 @@ export class TransactionEntryMapper extends BaseMapper<TransactionEntryEntity, T
       throw new Error('ORM entity is required');
     }
 
-    return new TransactionEntryEntity({
-      id: ormEntity.id,
-      // Map your properties from snake_case to camelCase
-      // Example: amount: ormEntity.amount,
-      // Example: accountId: ormEntity.account_id,
-    });
+    // TODO: Implement proper mapping from ORM to domain entity
+    throw new Error('Not implemented');
   }
 
   toOrm(domainEntity: TransactionEntryEntity): TransactionEntryOrmEntity {
